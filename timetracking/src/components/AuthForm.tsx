@@ -1,5 +1,7 @@
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import React, { useState } from 'react';
+import { auth } from '../firebase';
 
 interface FormData {
   name?: string;
@@ -78,18 +80,29 @@ const AuthUI: React.FC = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
-    // Simulate API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log(isSignUp ? 'Sign up successful!' : 'Sign in successful!', formData);
-      alert(isSignUp ? 'Account created successfully!' : 'Welcome back!');
-    } catch (error) {
-      console.error('Auth error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+      if (isSignUp) {
+    await createUserWithEmailAndPassword(auth, formData.email,formData.password);
+    alert("Account Creation Successful!")
+  }
+
+  if (!isSignUp) {
+  await signInWithEmailAndPassword(auth, formData.email,formData.password);
+ alert("Logged In Successful!")
+}
+
+  setIsLoading(false);
+
+  //     try {
+  //       await new Promise(resolve => setTimeout(resolve, 2000));
+  //       console.log(isSignUp ? 'Sign up successful!' : 'Sign in successful!', formData);
+  //       alert(isSignUp ? 'Account created successfully!' : 'Welcome back!');
+  //     } catch (error) {
+  //       console.error('Auth error:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+};
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
