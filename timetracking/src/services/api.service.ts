@@ -5,7 +5,10 @@
 
 import type { Schedule, TimeMetrics } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Use relative URL in production (Firebase rewrites handle /api/* routes)
+// Use localhost in development
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production' ? '' : 'https://time-tracking-60bab.web.app/');
 
 interface TimeCalculationRequest {
   punchIn: string;

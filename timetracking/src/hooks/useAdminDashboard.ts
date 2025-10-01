@@ -98,14 +98,25 @@ export function useAdminDashboard(selectedDate: string, activeTab: 'punches' | '
       const reportPromises = summaries.map(async (summary) => {
         const userName = await FirebaseService.getUserName(summary.userId || summary.userEmail);
 
+        // Safely handle NaN and undefined values
+        const safeNumber = (value: any, decimals: number = 2): string => {
+          const num = parseFloat(value);
+          return isNaN(num) ? '0.00' : num.toFixed(decimals);
+        };
+
+        const safeInt = (value: any): string => {
+          const num = parseInt(value);
+          return isNaN(num) ? '0' : num.toString();
+        };
+
         return {
           employeeName: userName,
-          regular: summary.regularHours || '0.00',
-          overtime: summary.overtimeHours || '0.00',
-          nightDiff: summary.nightDiffHours || '0.00',
-          late: summary.totalLateMinutes?.toString() || '0',
-          undertime: summary.totalUndertimeMinutes?.toString() || '0',
-          total: summary.totalWorkedHours || '0.00'
+          regular: safeNumber(summary.regularHours),
+          overtime: safeNumber(summary.overtimeHours),
+          nightDiff: safeNumber(summary.nightDiffHours),
+          late: safeInt(summary.totalLateMinutes),
+          undertime: safeInt(summary.totalUndertimeMinutes),
+          total: safeNumber(summary.totalWorkedHours)
         };
       });
 
@@ -144,6 +155,17 @@ export function useAdminDashboard(selectedDate: string, activeTab: 'punches' | '
 
       const userWeeklySummary: Record<string, WeeklyReport> = {};
 
+      // Helper to safely parse numbers
+      const safeParseFloat = (value: any): number => {
+        const num = parseFloat(value);
+        return isNaN(num) ? 0 : num;
+      };
+
+      const safeParseInt = (value: any): number => {
+        const num = parseInt(value);
+        return isNaN(num) ? 0 : num;
+      };
+
       summaries.forEach((summary) => {
         const userId = summary.userId;
 
@@ -161,22 +183,22 @@ export function useAdminDashboard(selectedDate: string, activeTab: 'punches' | '
 
         const report = userWeeklySummary[userId];
         report.regularHours = (
-          parseFloat(report.regularHours) + parseFloat(summary.regularHours || '0')
+          safeParseFloat(report.regularHours) + safeParseFloat(summary.regularHours)
         ).toFixed(2);
         report.overtimeHours = (
-          parseFloat(report.overtimeHours) + parseFloat(summary.overtimeHours || '0')
+          safeParseFloat(report.overtimeHours) + safeParseFloat(summary.overtimeHours)
         ).toFixed(2);
         report.nightDiffHours = (
-          parseFloat(report.nightDiffHours) + parseFloat(summary.nightDiffHours || '0')
+          safeParseFloat(report.nightDiffHours) + safeParseFloat(summary.nightDiffHours)
         ).toFixed(2);
         report.lateMinutes = (
-          parseInt(report.lateMinutes) + (summary.totalLateMinutes || 0)
+          safeParseInt(report.lateMinutes) + safeParseInt(summary.totalLateMinutes)
         ).toString();
         report.undertimeMinutes = (
-          parseInt(report.undertimeMinutes) + (summary.totalUndertimeMinutes || 0)
+          safeParseInt(report.undertimeMinutes) + safeParseInt(summary.totalUndertimeMinutes)
         ).toString();
         report.totalHours = (
-          parseFloat(report.totalHours) + parseFloat(summary.totalWorkedHours || '0')
+          safeParseFloat(report.totalHours) + safeParseFloat(summary.totalWorkedHours)
         ).toFixed(2);
       });
 
@@ -362,7 +384,8 @@ export function useAdminDashboard(selectedDate: string, activeTab: 'punches' | '
 
   useEffect(() => {
     fetchAttendanceData();
-  }, [selectedDate, fetchAttendanceData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
 
   useEffect(() => {
     if (activeTab === 'daily') {
@@ -370,7 +393,8 @@ export function useAdminDashboard(selectedDate: string, activeTab: 'punches' | '
     } else if (activeTab === 'weekly') {
       fetchWeeklyReports();
     }
-  }, [activeTab, selectedDate, fetchDailyReports, fetchWeeklyReports]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedDate]);
 
   return {
     punches,

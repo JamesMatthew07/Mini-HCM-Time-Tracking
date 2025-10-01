@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "backend": "node backend/server.js",
-    "start": "concurrently \"npm run backend\" \"npm run dev\""
+    "start": "concurrently \"npm run backend\" \"npm run dev\"",
+    "deploy": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",

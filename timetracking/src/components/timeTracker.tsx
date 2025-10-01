@@ -2,6 +2,7 @@ import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc } f
 import { Calendar, Clock, LogIn, LogOut, Timer, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
+import { ApiService } from '../services/api.service';
 import { getTodayISO } from '../utils/date.utils';
 
 interface User {
@@ -184,25 +185,12 @@ const PunchClock: React.FC<PunchClockProps> = ({ user, onLogout }) => {
         // Calculate time metrics using the backend API
         let calculatedMetrics = null;
         try {
-          const response = await fetch('http://localhost:5000/api/calculate-time', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              punchIn: currentSession.punchIn.toISOString(),
-              punchOut: punchOutTime.toISOString(),
-              schedule: schedule
-            })
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            calculatedMetrics = result.data;
-            console.log('Calculated time metrics:', calculatedMetrics);
-          } else {
-            console.error('Failed to calculate time metrics:', await response.text());
-          }
+          calculatedMetrics = await ApiService.calculateTimeMetrics(
+            currentSession.punchIn,
+            punchOutTime,
+            schedule
+          );
+          console.log('Calculated time metrics:', calculatedMetrics);
         } catch (apiError) {
           console.error('Error calling time calculation API:', apiError);
           // Continue without metrics if API fails
@@ -260,14 +248,22 @@ const PunchClock: React.FC<PunchClockProps> = ({ user, onLogout }) => {
 
         await addDoc(collection(db, 'attendance'), punchOutData);
 
-        // Update daily summary if metrics were calculated
-        if (calculatedMetrics) {
-          await updateDailySummary(
-            user.userId || user.email,
-            todayDate, // Use same date variable
-            calculatedMetrics
-          );
-        }
+        // Always update daily summary, even with zero metrics
+        // This ensures new users appear in daily/weekly reports
+        const metricsToSave = calculatedMetrics || {
+          totalWorkedHours: '0.00',
+          regularHours: '0.00',
+          overtimeHours: '0.00',
+          nightDiffHours: '0.00',
+          lateMinutes: 0,
+          undertimeMinutes: 0
+        };
+
+        await updateDailySummary(
+          user.userId || user.email,
+          todayDate,
+          metricsToSave
+        );
 
         const completedEntry: TimeEntry = {
           ...currentSession,

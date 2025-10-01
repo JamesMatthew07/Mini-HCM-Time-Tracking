@@ -28,4 +28,6 @@ adminDashboard.tsx.old
 AuthForm.tsx.old
 Dashboard.tsx
 
-.claude/
+settings.local.json
+
+.vercel

@@ -78,8 +78,10 @@ export function formatDurationHours(seconds: number): string {
  * Convert 12-hour time string to 24-hour format for datetime-local input
  */
 export function convertTo24Hour(time12h: string): string {
-  const [time, modifier] = time12h.split(' ');
-  const [hoursStr, minutes] = time.split(':');
+  const [time, modifier] = time12h.trim().split(' ');
+  const timeParts = time.split(':');
+  const hoursStr = timeParts[0];
+  const minutes = timeParts[1] || '00';
   let hours = parseInt(hoursStr, 10);
 
   if (hours === 12 && modifier === 'AM') {

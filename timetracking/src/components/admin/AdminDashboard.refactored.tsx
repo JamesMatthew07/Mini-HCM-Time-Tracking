@@ -37,9 +37,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
     dailyReports,
     weeklyReports,
     loading,
-    // fetchAttendanceData,
-    fetchDailyReports,
-    fetchWeeklyReports,
     handleDeletePunch,
     handleSaveEdit,
     convertTo24Hour
@@ -127,7 +124,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
             searchQuery={searchQuery}
             selectedDate={selectedDate}
             showFilterMenu={showFilterMenu}
-            activeTab={activeTab}
             onSearchChange={setSearchQuery}
             onDateChange={setSelectedDate}
             onFilterToggle={() => setShowFilterMenu(!showFilterMenu)}

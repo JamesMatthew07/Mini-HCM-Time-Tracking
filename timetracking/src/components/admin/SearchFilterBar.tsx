@@ -10,7 +10,6 @@ interface SearchFilterBarProps {
   searchQuery: string;
   selectedDate: string;
   showFilterMenu: boolean;
-  activeTab: 'punches' | 'daily' | 'weekly';
   onSearchChange: (query: string) => void;
   onDateChange: (date: string) => void;
   onFilterToggle: () => void;
@@ -20,7 +19,6 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
   searchQuery,
   selectedDate,
   showFilterMenu,
-  activeTab,
   onSearchChange,
   onDateChange,
   onFilterToggle
