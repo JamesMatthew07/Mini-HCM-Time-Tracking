@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(curl -X POST http://localhost:5000/api/calculate-time -H \"Content-Type: application/json\" -d \"{\"\"punchIn\"\":\"\"2025-09-30T09:15:00Z\"\",\"\"punchOut\"\":\"\"2025-09-30T19:30:00Z\"\",\"\"schedule\"\":{\"\"start\"\":\"\"09:00\"\",\"\"end\"\":\"\"18:00\"\",\"\"timezone\"\":\"\"UTC\"\"}}\")",
+      "Bash(npm run backend:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
