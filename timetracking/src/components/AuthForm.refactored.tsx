@@ -188,19 +188,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             </div>
           )}
 
-          {/* Forgot Password Link (Sign In Only) */}
-          {!isSignUp && (
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="text-sm text-blue-600 hover:text-blue-500 transition-colors"
-                onClick={() => alert('Forgot password functionality would be implemented here')}
-              >
-                Forgot password?
-              </button>
-            </div>
-          )}
-
           {/* Submit Button */}
           <button
             type="submit"
